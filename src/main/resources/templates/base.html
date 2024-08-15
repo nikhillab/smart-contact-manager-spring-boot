@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" th:fragment="parent(content)">
+<html lang="en" th:fragment="parent(content)" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,9 +10,11 @@
       rel="stylesheet"
     />
   </head>
-  <body class="p-4">
+  <body class="p-4 dark:bg-gray-900 dark:text-white">
     <!--Header-->
+
     <div data-th-replace="~{header :: navbar}"></div>
+
     <!--Main section-->
     <section data-th-replace="${content}"></section>
 
