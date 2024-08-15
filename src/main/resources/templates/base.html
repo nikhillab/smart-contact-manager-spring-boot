@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" th:fragment="parent(content)">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-th-text="${title}"></title>
+    <link rel="stylesheet" data-th-href="@{'/css/output.css'}" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="p-4">
+    <!--Header-->
+    <div data-th-replace="~{header :: navbar}"></div>
+    <!--Main section-->
+    <section data-th-replace="${content}"></section>
+
+    <!--Footer-->
+    <h5>Footer</h5>
+
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+  </body>
+</html>
