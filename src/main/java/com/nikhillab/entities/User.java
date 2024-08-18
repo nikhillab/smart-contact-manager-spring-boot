@@ -3,6 +3,8 @@ package com.nikhillab.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nikhillab.dto.Providers;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
