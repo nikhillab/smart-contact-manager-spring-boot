@@ -22,9 +22,9 @@ public class SmartContactManager implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Optional<User> userById = service.getUserById(2l);
-		
-		System.out.println(userById.get().getProvider());
+//		Optional<User> userById = service.getUserById(2l);
+//		
+//		System.out.println(userById.get().getProvider());
 	}
 
 }

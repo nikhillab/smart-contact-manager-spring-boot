@@ -5,8 +5,10 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.nikhillab.dto.AppConstants;
 import com.nikhillab.dto.UserForm;
 import com.nikhillab.entities.User;
 import com.nikhillab.exception.ResourceNotFoundException;
@@ -19,8 +21,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepo userRepo;
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 //
 //    @Autowired
 //    private EmailService emailService;
@@ -33,17 +35,15 @@ public class UserServiceImpl implements UserService {
 		User user = new User();
 		user.setEmail(userForm.getEmail());
 		user.setName(userForm.getName());
-		user.setPassword(userForm.getPassword());
 		user.setPhoneNumber(userForm.getPhone());
 		user.setAbout(userForm.getAbout());
 		user.setProfilePic("static/image/default_profile.png");
 
-		// password encode
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//		 password encode
+        user.setPassword(passwordEncoder.encode(userForm.getPassword()));
 
-		// set the user role
-
-//        user.setRoleList(List.of(AppConstants.ROLE_USER));
+//		 set the user role
+        user.setRoleList(List.of(AppConstants.ROLE_USER));
 
 		logger.info(user.getProvider().toString());
 //		String emailToken = UUID.randomUUID().toString();

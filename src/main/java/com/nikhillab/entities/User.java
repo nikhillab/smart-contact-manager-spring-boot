@@ -1,12 +1,18 @@
 package com.nikhillab.entities;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.nikhillab.dto.Providers;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +23,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,6 +56,9 @@ public class User {
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Contact> contacts = new ArrayList<>();
+
+	@ElementCollection(fetch = FetchType.EAGER)
+	private List<String> roleList = new ArrayList<>();
 
 	public User() {
 	}
@@ -153,5 +162,25 @@ public class User {
 	public void setContacts(List<Contact> contacts) {
 		this.contacts = contacts;
 	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return getRoleList().stream().map(SimpleGrantedAuthority::new).toList();
+	}
+
+	@Override
+	public String getUsername() {
+		return this.email;
+	}
+
+	public List<String> getRoleList() {
+		return roleList;
+	}
+
+	public void setRoleList(List<String> roleList) {
+		this.roleList = roleList;
+	}
+
+
 
 }

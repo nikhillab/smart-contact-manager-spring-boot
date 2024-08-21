@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.nikhillab.dto.Message;
 import com.nikhillab.dto.UserForm;
-import com.nikhillab.entities.User;
 import com.nikhillab.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
@@ -22,6 +21,11 @@ public class PageController {
 
 	public PageController(UserService userService) {
 		this.userService = userService;
+	}
+
+	@GetMapping("/")
+	public String main(Model model) {
+		return "redirect:/home";
 	}
 
 	@GetMapping("/home")
@@ -74,9 +78,8 @@ public class PageController {
 		}
 
 		System.out.println("Inside registerNewUser");
-		System.out.println(userForm);
 
-//		userService.saveUser(userForm);
+		userService.saveUser(userForm);
 
 		Message message = new Message("User registered", Message.MessageType.blue);
 
