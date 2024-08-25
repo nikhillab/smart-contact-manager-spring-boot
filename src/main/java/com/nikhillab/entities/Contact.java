@@ -1,6 +1,8 @@
 
 package com.nikhillab.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,12 +22,22 @@ public class Contact {
 	private String address;
 	private String picture;
 	@Column(length = 1000)
-	private String discription;
-	private boolean favorites = false;
-	private String link;
+    private String description;
+    private boolean favorite = false;
+    private String websiteLink;
+    private String linkedInLink;
 
 	@ManyToOne
+	@JsonIgnore
 	private User user;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;
@@ -67,28 +79,36 @@ public class Contact {
 		this.picture = picture;
 	}
 
-	public String getDiscription() {
-		return discription;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDiscription(String discription) {
-		this.discription = discription;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public boolean isFavorites() {
-		return favorites;
+	public boolean isFavorite() {
+		return favorite;
 	}
 
-	public void setFavorites(boolean favorites) {
-		this.favorites = favorites;
+	public void setFavorite(boolean favorite) {
+		this.favorite = favorite;
 	}
 
-	public String getLink() {
-		return link;
+	public String getWebsiteLink() {
+		return websiteLink;
 	}
 
-	public void setLink(String link) {
-		this.link = link;
+	public void setWebsiteLink(String websiteLink) {
+		this.websiteLink = websiteLink;
+	}
+
+	public String getLinkedInLink() {
+		return linkedInLink;
+	}
+
+	public void setLinkedInLink(String linkedInLink) {
+		this.linkedInLink = linkedInLink;
 	}
 
 	public User getUser() {
@@ -99,8 +119,6 @@ public class Contact {
 		this.user = user;
 	}
 
-	public Long getId() {
-		return id;
-	}
+	
 
 }
