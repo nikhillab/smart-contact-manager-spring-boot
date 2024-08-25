@@ -9,12 +9,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-
 public class Contact {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 	private String name;
 	private String email;
 	private String phoneNumber;
@@ -24,7 +23,7 @@ public class Contact {
 	private String discription;
 	private boolean favorites = false;
 	private String link;
-	
+
 	@ManyToOne
 	private User user;
 
@@ -100,9 +99,8 @@ public class Contact {
 		this.user = user;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	
 
 }
