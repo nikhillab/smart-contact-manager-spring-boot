@@ -21,11 +21,11 @@ public interface ContactService {
 
     // get contact by id
 
-    Contact getById(String id);
+    Contact getById(Long id);
 
     // delete contact
 
-    void delete(String id);
+    void delete(Long id);
 
     // search contact
     Page<Contact> searchByName(String nameKeyword, int size, int page, String sortBy, String order, User user);

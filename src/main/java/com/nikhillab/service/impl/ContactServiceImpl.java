@@ -4,66 +4,86 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.nikhillab.entities.Contact;
 import com.nikhillab.entities.User;
+import com.nikhillab.exception.ResourceNotFoundException;
 import com.nikhillab.repo.ContactRepo;
 import com.nikhillab.service.ContactService;
 
 @Service
-public class ContactServiceImpl implements ContactService{
+public class ContactServiceImpl implements ContactService {
 
     @Autowired
     private ContactRepo contactRepo;
 
     @Override
     public Contact save(Contact contact) {
-       return contactRepo.save(contact);
+        return contactRepo.save(contact);
     }
 
     @Override
     public Contact update(Contact contact) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        var contactOld = contactRepo.findById(contact.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Contact not found"));
+        contactOld.setName(contact.getName());
+        contactOld.setEmail(contact.getEmail());
+        contactOld.setPhoneNumber(contact.getPhoneNumber());
+        contactOld.setAddress(contact.getAddress());
+        contactOld.setDescription(contact.getDescription());
+        contactOld.setPicture(contact.getPicture());
+        contactOld.setFavorite(contact.isFavorite());
+        contactOld.setWebsiteLink(contact.getWebsiteLink());
+        contactOld.setLinkedInLink(contact.getLinkedInLink());
+
+        return contactRepo.save(contactOld);
     }
 
     @Override
     public List<Contact> getAll() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAll'");
+        return contactRepo.findAll();
     }
 
     @Override
-    public Contact getById(String id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getById'");
+    public Contact getById(Long id) {
+        return contactRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Contact not found with given id " + id));
     }
 
     @Override
-    public void delete(String id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    public void delete(Long id) {
+        var contact = contactRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Contact not found with given id " + id));
+        contactRepo.delete(contact);
     }
 
     @Override
     public Page<Contact> searchByName(String nameKeyword, int size, int page, String sortBy, String order, User user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchByName'");
+
+        Sort sort = order.equals("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        var pageable = PageRequest.of(page, size, sort);
+        return contactRepo.findByUserAndNameContaining(user, nameKeyword, pageable);
+
     }
 
     @Override
     public Page<Contact> searchByEmail(String emailKeyword, int size, int page, String sortBy, String order,
             User user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchByEmail'");
+        Sort sort = order.equals("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        var pageable = PageRequest.of(page, size, sort);
+        return contactRepo.findByUserAndEmailContaining(user, emailKeyword, pageable);
     }
 
     @Override
     public Page<Contact> searchByPhoneNumber(String phoneNumberKeyword, int size, int page, String sortBy, String order,
             User user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchByPhoneNumber'");
+
+        Sort sort = order.equals("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        var pageable = PageRequest.of(page, size, sort);
+        return contactRepo.findByUserAndPhoneNumberContaining(user, phoneNumberKeyword, pageable);
     }
 
     @Override
@@ -73,9 +93,14 @@ public class ContactServiceImpl implements ContactService{
     }
 
     @Override
-    public Page<Contact> getByUser(User user, int page, int size, String sortField, String sortDirection) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getByUser'");
+    public Page<Contact> getByUser(User user, int page, int size, String sortBy, String direction) {
+
+        Sort sort = direction.equals("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+
+        var pageable = PageRequest.of(page, size, sort);
+
+        return contactRepo.findByUser(user, pageable);
+
     }
-    
+
 }
