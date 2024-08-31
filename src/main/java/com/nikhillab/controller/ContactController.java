@@ -10,16 +10,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.nikhillab.dto.AppConstants;
 import com.nikhillab.dto.ContactForm;
 import com.nikhillab.dto.ContactSearchForm;
 import com.nikhillab.dto.Message;
+import com.nikhillab.dto.Message.MessageType;
 import com.nikhillab.entities.Contact;
 import com.nikhillab.entities.User;
 import com.nikhillab.service.ContactService;
@@ -28,6 +32,7 @@ import com.nikhillab.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping("/user/contact")
@@ -148,7 +153,7 @@ public class ContactController {
         }
 
         logger.info("pageContact {}", pageContact);
-        
+
         model.addAttribute("title", "Search Contacts");
 
         model.addAttribute("contactSearchForm", contactSearchForm);
@@ -156,9 +161,93 @@ public class ContactController {
         model.addAttribute("pageContact", pageContact);
 
         model.addAttribute("pageSize", AppConstants.PAGE_SIZE);
-        
 
         return "user/search";
+    }
+
+    @RequestMapping("/delete/{id}")
+    public String deleteContact(@PathVariable Long id, HttpSession session) {
+        contactService.delete(id);
+        session.setAttribute("message",
+                new Message("Contact is Deleted successfully !! ",
+                        Message.MessageType.green));
+
+        return "redirect:/user/contact";
+    }
+
+    @GetMapping("/view/{id}")
+    public String updateContactFormView(
+            @PathVariable Long id,
+            Model model) {
+
+        var contact = contactService.getById(id);
+        ContactForm contactForm = new ContactForm();
+        contactForm.setName(contact.getName());
+        contactForm.setEmail(contact.getEmail());
+        contactForm.setPhoneNumber(contact.getPhoneNumber());
+        contactForm.setAddress(contact.getAddress());
+        contactForm.setDescription(contact.getDescription());
+        contactForm.setFavorite(contact.isFavorite());
+        contactForm.setWebsiteLink(contact.getWebsiteLink());
+        contactForm.setLinkedInLink(contact.getLinkedInLink());
+        contactForm.setPicture(contact.getPicture());
+
+        model.addAttribute("contactForm", contactForm);
+        model.addAttribute("contactId", id);
+        model.addAttribute("title", "Update Contacts");
+
+        return "user/update_contact_view";
+    }
+
+    @PostMapping("/update/{id}")
+    public String updateContact(@PathVariable Long id,
+            @Valid @ModelAttribute ContactForm contactForm,
+            BindingResult bindingResult,
+            Model model, HttpSession session) {
+
+        // update the contact
+        if (bindingResult.hasErrors()) {
+            return "user/update_contact_view";
+        }
+
+        var con = contactService.getById(id);
+        con.setId(id);
+        con.setName(contactForm.getName());
+        con.setEmail(contactForm.getEmail());
+        con.setPhoneNumber(contactForm.getPhoneNumber());
+        con.setAddress(contactForm.getAddress());
+        con.setDescription(contactForm.getDescription());
+        con.setFavorite(contactForm.isFavorite());
+        con.setWebsiteLink(contactForm.getWebsiteLink());
+        con.setLinkedInLink(contactForm.getLinkedInLink());
+
+        // process image:
+
+        if (contactForm.getContactImage() != null && !contactForm.getContactImage().isEmpty()) {
+            logger.info("file is not empty");
+            String fileName = UUID.randomUUID().toString();
+            try {
+                var imageUrl = imageService.uploadImage(contactForm.getContactImage(), fileName);
+                con.setPicture(imageUrl);
+            } catch (IOException e) {
+                session.setAttribute("message",
+                        new Message("Error While saving Contact Image", Message.MessageType.red));
+                return "redirect:/user/contacts/view/" + id;
+            }
+            
+
+        } else {
+            session.setAttribute("message",
+                        new Message("Error While saving Contact Image", Message.MessageType.red));
+                return "redirect:/user/contacts/view/" + id;
+        }
+
+        var updateCon = contactService.update(con);
+        logger.info("updated contact {}", updateCon);
+
+        session.setAttribute("message", new Message("Contact Updated !!", Message.MessageType.green));
+
+        return "redirect:/user/contact/view/" + id;
     }
 
 }

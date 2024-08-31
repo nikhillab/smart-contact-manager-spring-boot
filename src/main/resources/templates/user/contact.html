@@ -228,21 +228,8 @@
             </div>
           </div>
         </div>
-        <!-- <div data-th-replace="~{ user/contact_modals :: contact}"></div> -->
+        <div data-th-replace="~{ user/contact_modals :: contact}"></div>
       </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@linways/table-to-excel@1.0.4/dist/tableToExcel.min.js"></script>
-    <script data-th-src="@{'/js/contact.js'}"></script>
-    <script>
-      function exportData() {
-        TableToExcel.convert(document.getElementById("contact-table"), {
-          name: "contact.xlsx",
-          sheet: {
-            name: "Sheet 1",
-          },
-        });
-      }
-    </script>
   </body>
 </html>
