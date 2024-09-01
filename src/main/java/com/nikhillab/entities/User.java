@@ -180,7 +180,10 @@ public class User implements UserDetails {
 	public void setRoleList(List<String> roleList) {
 		this.roleList = roleList;
 	}
-
+	@Override
+	public boolean isEnabled() {
+		return this.enable;
+	}
 
 
 }

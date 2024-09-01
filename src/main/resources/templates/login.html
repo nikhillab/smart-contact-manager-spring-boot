@@ -17,6 +17,7 @@
             <p class="font-normal text-gray-700 dark:text-gray-400">
               Start Managing your contacts on cloud by SCM.
             </p>
+            <div data-th-replace="~{message::messagebox}"></div>
             <div th:if="${param.error}" class="text-red-600">
               Invalid username or password.
             </div>

@@ -4,15 +4,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.nikhillab.helper.AuthFailtureHandler;
 import com.nikhillab.service.impl.CustomUserDetailsService;
 
 @Configuration
@@ -45,7 +43,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,AuthFailtureHandler authFailtureHandler) throws Exception {
 		httpSecurity.authorizeHttpRequests(request -> {
 			request.requestMatchers("/user/**").authenticated();
 			request.anyRequest().permitAll();
@@ -58,7 +56,8 @@ public class SecurityConfig {
 		// change if we want to change login form
 		httpSecurity.formLogin(form -> form.loginPage("/login").permitAll().loginProcessingUrl("/authenticate")
 				.defaultSuccessUrl("/user/dashboard").failureUrl("/login?error=true").usernameParameter("email")
-				.passwordParameter("password"));
+				.passwordParameter("password").failureHandler(authFailtureHandler));
+		
 
 		httpSecurity.logout(logout -> logout.logoutUrl("/logout").permitAll().logoutSuccessUrl("/login?logout=true"));
 

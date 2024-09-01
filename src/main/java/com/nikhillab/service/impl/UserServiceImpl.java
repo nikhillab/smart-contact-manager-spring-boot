@@ -38,7 +38,8 @@ public class UserServiceImpl implements UserService {
 		user.setPhoneNumber(userForm.getPhone());
 		user.setAbout(userForm.getAbout());
 		user.setProfilePic("static/image/default_profile.png");
-
+		user.setEnable(false);
+		
 //		 password encode
         user.setPassword(passwordEncoder.encode(userForm.getPassword()));
 
